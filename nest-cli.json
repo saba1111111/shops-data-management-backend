@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/shops-data-managmenet-backend/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/shops-data-managmenet-backend/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/shops-data-managmenet-backend",
+  "projects": {
+    "shops-data-managmenet-backend": {
+      "type": "application",
+      "root": "apps/shops-data-managmenet-backend",
+      "entryFile": "main",
+      "sourceRoot": "apps/shops-data-managmenet-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/shops-data-managmenet-backend/tsconfig.app.json"
+      }
+    },
+    "shops-data-management": {
+      "type": "application",
+      "root": "apps/shops-data-management",
+      "entryFile": "main",
+      "sourceRoot": "apps/shops-data-management/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/shops-data-management/tsconfig.app.json"
+      }
+    }
+  }
+}

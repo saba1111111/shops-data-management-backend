@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  shops-data-management:
+    build:
+      context: .
+      dockerfile: ./apps/shops-data-management/Dockerfile
+      target: development
+    command: /start.sh shops-data-management development
+    ports:
+      - '${SHOPS_DATA_MANAGEMENT_PORT}:3000'
+    env_file:
+      - ./apps/shops-data-management/.env.development
+    depends_on:
+      - shopsDataManagementPg
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  shopsDataManagementPg:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: '${SHOPS_DATA_MANAGEMENT_DB_USERNAME}'
+      POSTGRES_PASSWORD: '${SHOPS_DATA_MANAGEMENT_DB_PASSWORD}'
+      POSTGRES_DB: '${SHOPS_DATA_MANAGEMENT_DB_DATABASE}'
+    ports:
+      - '${SHOPS_DATA_MANAGEMENT_DB_PORT}:5432'
+    volumes:
+      - shopsDataManagementPg:/var/lib/postgresql/data
+
+volumes:
+  shopsDataManagementPg:
+    driver: local
