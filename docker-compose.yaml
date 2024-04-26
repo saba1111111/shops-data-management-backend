@@ -29,6 +29,14 @@ services:
     volumes:
       - shopsDataManagementPg:/var/lib/postgresql/data
 
+  shopsDataManagementCache:
+    image: redis:latest
+    ports:
+      - '${SHOPS_DATA_MANAGEMENT_CACHE_PORT}:6379'
+    volumes:
+      - redis_data:/data
+
 volumes:
   shopsDataManagementPg:
     driver: local
+  redis_data:
