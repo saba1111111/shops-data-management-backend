@@ -14,8 +14,8 @@ CONFIG_DIR=./apps/$SERVICE
 # Change to the CONFIG_DIR
 cd $CONFIG_DIR
 
-#npx sequelize-cli db:migrate --env $ENV
-#npx sequelize-cli db:seed:all --env $ENV
+npx sequelize-cli db:migrate --env $ENV
+# npx sequelize-cli db:seed:all --env $ENV
 
 # Change back to the original directory
 cd $ORIGINAL_DIR

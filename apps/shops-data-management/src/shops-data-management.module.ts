@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ShopsDataManagementController } from './shops-data-management.controller';
-import { ShopsDataManagementService } from './shops-data-management.service';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseConfigModule } from './config';
 
 @Module({
-  imports: [],
-  controllers: [ShopsDataManagementController],
-  providers: [ShopsDataManagementService],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseConfigModule],
+  controllers: [],
+  providers: [],
 })
 export class ShopsDataManagementModule {}

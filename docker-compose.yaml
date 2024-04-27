@@ -13,9 +13,10 @@ services:
       - ./apps/shops-data-management/.env.development
     depends_on:
       - shopsDataManagementPg
+      - shopsDataManagementCache
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+      # - /usr/src/app/node_modules
 
   shopsDataManagementPg:
     image: postgres:14.1-alpine
