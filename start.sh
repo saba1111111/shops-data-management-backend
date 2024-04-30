@@ -15,10 +15,11 @@ CONFIG_DIR=./apps/$SERVICE
 cd $CONFIG_DIR
 
 npx sequelize-cli db:migrate --env $ENV
+#npx sequelize-cli db:migrate:undo --env $ENV
 # npx sequelize-cli db:seed:all --env $ENV
 
 # Change back to the original directory
 cd $ORIGINAL_DIR
 
 # run service in development mode
-yarn start:dev $SERVICE
+npm run start:dev $SERVICE
