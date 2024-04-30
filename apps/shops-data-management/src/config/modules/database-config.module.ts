@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DB_ENVS } from '../constants';
 import { Dialect } from 'sequelize';
+import { PermissionModel } from 'libs/permissions/models';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { Dialect } from 'sequelize';
         dialect: configService.get<string>(
           DB_ENVS.SHOPS_DATA_MANAGEMENT_DB_DIALECT,
         ) as Dialect,
-        models: [],
+        models: [PermissionModel],
       }),
       inject: [ConfigService],
     }),

@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      resource_type: {
+      resource: {
         allowNull: false,
         type: Sequelize.ENUM(
           'debts',
@@ -18,6 +18,7 @@ module.exports = {
           'statistics',
           'workers',
           'customer-messages',
+          'permissions',
         ),
       },
       type: {
