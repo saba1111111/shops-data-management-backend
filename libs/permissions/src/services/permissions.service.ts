@@ -9,12 +9,14 @@ import {
   TFindPermissionCredentials,
 } from '../types';
 import {
+  NoPermissionsDeletedException,
   PermissionAlreadyExistsException,
   PermissionNotFoundException,
 } from '../exceptions';
 import { handleError } from 'libs/common/helpers';
 import { PERMISSIONS_REPOSITORY_TOKEN } from '../constants';
 import { IPaginationProps } from 'libs/common';
+import { PaginationPermissionsResponseEntity } from '../entities';
 
 @Injectable()
 export class PermissionsService {
@@ -44,17 +46,19 @@ export class PermissionsService {
     }
   }
 
-  public async getAll(credentials: IPaginationProps) {
+  public async getAll(
+    credentials: IPaginationProps,
+  ): Promise<PaginationPermissionsResponseEntity> {
     try {
       const permissions = await this.permissionsRepository.findAll(credentials);
 
-      return permissions;
+      return permissions as PaginationPermissionsResponseEntity;
     } catch (error) {
       handleError(error);
     }
   }
 
-  public async findById(id: string) {
+  public async findById(id: string): Promise<IPermission> {
     try {
       const permission = await this.permissionsRepository.findById(id);
       if (!permission) {
@@ -70,7 +74,7 @@ export class PermissionsService {
   public async updateById(
     id: string,
     updateData: IUpdatePermissionsCredentials,
-  ) {
+  ): Promise<IPermission> {
     try {
       const permission = await this.findById(id);
       if (!permission) {
@@ -100,9 +104,29 @@ export class PermissionsService {
     }
   }
 
+  public async deleteById(id: string): Promise<number> {
+    try {
+      const permission = await this.findById(id);
+      if (!permission) {
+        throw new PermissionNotFoundException();
+      }
+
+      const numberOfRemovedItems =
+        await this.permissionsRepository.deleteById(id);
+
+      if (numberOfRemovedItems <= 0) {
+        throw new NoPermissionsDeletedException(id);
+      }
+
+      return numberOfRemovedItems;
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   private async checkPermissionExistence(
     credentials: TFindPermissionCredentials,
-  ) {
+  ): Promise<void> {
     const permission = await this.permissionsRepository.findOne(credentials);
 
     if (permission) {

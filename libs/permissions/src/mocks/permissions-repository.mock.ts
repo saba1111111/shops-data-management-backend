@@ -65,4 +65,9 @@ export const MockPermissionsRepository = {
       });
     },
   ),
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deleteById: jest.fn((id: string) => {
+    return Promise.resolve(1);
+  }),
 };

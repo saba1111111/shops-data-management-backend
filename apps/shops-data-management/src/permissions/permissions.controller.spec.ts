@@ -143,4 +143,26 @@ describe('PermissionsController', () => {
       expect(permissionService.updateById).toHaveBeenCalledWith(id, updateData);
     });
   });
+
+  describe('deletePermission method', () => {
+    it('should successfully delete a permission and return no content', async () => {
+      const permissionId = '1';
+      const response = await controller.deletePermission(permissionId);
+
+      expect(response).toEqual(1);
+      expect(permissionService.deleteById).toHaveBeenCalledWith(permissionId);
+    });
+
+    it('should throw an error when trying to delete a non-existent permission', async () => {
+      const permissionId = 'wrongId';
+      permissionService.deleteById = jest
+        .fn()
+        .mockRejectedValue(new PermissionNotFoundException());
+
+      await expect(controller.deletePermission(permissionId)).rejects.toThrow(
+        PermissionNotFoundException,
+      );
+      expect(permissionService.deleteById).toHaveBeenCalledWith(permissionId);
+    });
+  });
 });

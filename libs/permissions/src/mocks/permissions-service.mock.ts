@@ -14,4 +14,6 @@ export const MockPermissionsService = {
   updateById: jest.fn((id: string, input: UpdatePermissionDto) => {
     return Promise.resolve({ ...input, id });
   }),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deleteById: jest.fn((id: string) => Promise.resolve(1)),
 };

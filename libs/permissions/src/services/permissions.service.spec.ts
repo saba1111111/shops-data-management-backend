@@ -3,6 +3,7 @@ import { PermissionsService } from './permissions.service';
 import { PERMISSIONS_REPOSITORY_TOKEN } from '../constants';
 import { PermissionTypes, Resources } from '../enums';
 import {
+  NoPermissionsDeletedException,
   PermissionAlreadyExistsException,
   PermissionNotFoundException,
 } from '../exceptions';
@@ -11,9 +12,11 @@ import {
   MockingDates,
   MockPermissionsRepository,
 } from '../mocks';
+import { IPermissionsRepository } from '../interfaces';
 
 describe('PermissionsService', () => {
   let service: PermissionsService;
+  let repository: IPermissionsRepository;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -29,6 +32,11 @@ describe('PermissionsService', () => {
     }).compile();
 
     service = module.get<PermissionsService>(PermissionsService);
+    repository = module.get<IPermissionsRepository>(
+      PERMISSIONS_REPOSITORY_TOKEN,
+    );
+
+    repository.deleteById = jest.fn(() => Promise.resolve(1));
   });
 
   it('should be defined', () => {
@@ -134,6 +142,39 @@ describe('PermissionsService', () => {
       await expect(
         service.updateById(firstPermission.id, permissionData),
       ).rejects.toThrow(PermissionAlreadyExistsException);
+    });
+  });
+
+  describe('deleteById method.', () => {
+    it('should call the delete method on the repository with the correct ID', async () => {
+      const permissionId = mockPermissionsData[0].id;
+      await service.deleteById(permissionId);
+
+      expect(repository.deleteById).toHaveBeenCalledWith(permissionId);
+    });
+
+    it('should successfully delete a permission and return the count of deleted records', async () => {
+      const permission = mockPermissionsData[0];
+      const result = await service.deleteById(permission.id);
+
+      expect(result).toEqual(1);
+    });
+
+    it('should throw a PermissionNotFoundException if no permission exists with the provided ID', async () => {
+      const permissionId = 'wrongId';
+
+      await expect(service.deleteById(permissionId)).rejects.toThrow(
+        PermissionNotFoundException,
+      );
+    });
+
+    it('should throw a NoPermissionsDeletedException if no permissions were deleted', async () => {
+      const permission = mockPermissionsData[0];
+      repository.deleteById = jest.fn(() => Promise.resolve(0));
+
+      await expect(service.deleteById(permission.id)).rejects.toThrow(
+        NoPermissionsDeletedException,
+      );
     });
   });
 });
