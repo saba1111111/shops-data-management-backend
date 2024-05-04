@@ -50,6 +50,19 @@ export class PermissionsService {
     }
   }
 
+  public async findById(id: string) {
+    try {
+      const permission = await this.permissionsRepository.findById(id);
+      if (!permission) {
+        throw new PermissionNotFoundException();
+      }
+
+      return permission;
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   private async checkPermissionExistence(
     credentials: TFindPermissionCredentials,
   ): Promise<IPermission> {

@@ -7,11 +7,6 @@ import { MockingDates, mockPermissionsData } from './permissions-data.mocks';
 
 export const MockPermissionsRepository = {
   findOne: jest.fn((criteria: TFindPermissionCredentials) => {
-    if ('id' in criteria) {
-      return Promise.resolve(
-        mockPermissionsData.find((permission) => permission.id === criteria.id),
-      );
-    }
     return Promise.resolve(
       mockPermissionsData.find(
         (permission) =>
@@ -49,5 +44,11 @@ export const MockPermissionsRepository = {
         itemsPerPage: limit,
       },
     };
+  }),
+
+  findById: jest.fn((id: string) => {
+    return Promise.resolve(
+      mockPermissionsData.find((permission) => permission.id === id),
+    );
   }),
 };

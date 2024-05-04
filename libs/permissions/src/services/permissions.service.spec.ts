@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PermissionsService } from './permissions.service';
 import { PERMISSIONS_REPOSITORY_TOKEN } from '../constants';
 import { PermissionTypes, Resources } from '../enums';
-import { PermissionAlreadyExistsException } from '../exceptions';
+import {
+  PermissionAlreadyExistsException,
+  PermissionNotFoundException,
+} from '../exceptions';
 import {
   mockPermissionsData,
   MockingDates,
@@ -73,6 +76,23 @@ describe('PermissionsService', () => {
           itemsPerPage,
         },
       });
+    });
+  });
+
+  describe('find permission method test.', () => {
+    it('should return the correct permission object when given a valid id', async () => {
+      const permissionId = mockPermissionsData[0].id;
+      const permission = await service.findById(permissionId);
+
+      expect(permission).toEqual(mockPermissionsData[0]);
+    });
+
+    it('should throw a PermissionNotFoundException when given an invalid id', async () => {
+      const permissionId = 'wrongId';
+
+      await expect(service.findById(permissionId)).rejects.toThrow(
+        PermissionNotFoundException,
+      );
     });
   });
 });

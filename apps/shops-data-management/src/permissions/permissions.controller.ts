@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from 'libs/permissions';
 import { PermissionsRoutes } from 'libs/permissions/constants';
@@ -26,5 +26,11 @@ export class PermissionsController {
   @ApiResponse({ status: 200, type: PaginationPermissionsResponseEntity })
   public paginatePermissions(@Body() paginationData: PaginationCredentialsDto) {
     return this.permissionService.getAll(paginationData);
+  }
+
+  @Get(PermissionsRoutes.permission_id)
+  @ApiResponse({ status: 200, type: PermissionEntity })
+  public getPermission(@Param('id') id: string) {
+    return this.permissionService.findById(id);
   }
 }
