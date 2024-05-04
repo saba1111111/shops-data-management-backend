@@ -1,10 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PermissionsController } from './permissions.controller';
 import { PermissionsService } from 'libs/permissions';
-import { MockPermissionsService } from 'libs/permissions/mocks';
+import {
+  MockPermissionsService,
+  mockPermissionsData,
+} from 'libs/permissions/mocks';
 import { PermissionTypes, Resources } from 'libs/permissions/enums';
 import { MockingDates } from 'libs/permissions/mocks';
-import { CreatePermissionDto } from 'libs/permissions/dtos';
+import {
+  CreatePermissionDto,
+  PaginationCredentialsDto,
+} from 'libs/permissions/dtos';
 import { PermissionAlreadyExistsException } from 'libs/permissions/exceptions';
 
 describe('PermissionsController', () => {
@@ -74,6 +80,27 @@ describe('PermissionsController', () => {
       expect(permissionService.createPermission).toHaveBeenCalledWith(
         invalidPermissionData,
       );
+    });
+  });
+
+  describe('get permissions route.', () => {
+    it('should return paginated permissions', async () => {
+      const dto = new PaginationCredentialsDto();
+      dto.page = 1;
+      dto.itemsPerPage = 10;
+
+      const result = await controller.paginatePermissions(dto);
+
+      expect(result).toEqual({
+        pageInfo: {
+          currentPage: dto.page,
+          totalPages: Math.ceil(mockPermissionsData.length / dto.itemsPerPage),
+          itemsPerPage: dto.itemsPerPage,
+        },
+        items: mockPermissionsData,
+      });
+
+      expect(permissionService.getAll).toHaveBeenCalledWith(dto);
     });
   });
 });

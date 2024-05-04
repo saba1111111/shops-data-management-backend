@@ -1,3 +1,4 @@
+import { IPaginationProps } from 'libs/common';
 import {
   TCreatePermissionCredentials,
   TFindPermissionCredentials,
@@ -19,6 +20,7 @@ export const MockPermissionsRepository = {
       ),
     );
   }),
+
   create: jest.fn((input: TCreatePermissionCredentials) => {
     const newPermission = {
       ...input,
@@ -27,5 +29,25 @@ export const MockPermissionsRepository = {
     };
     mockPermissionsData.push(newPermission);
     return Promise.resolve(newPermission);
+  }),
+
+  findAll: jest.fn((input: IPaginationProps) => {
+    const limit = input.itemsPerPage;
+    const offset = (input.page - 1) * limit;
+
+    const items = mockPermissionsData.slice(offset, offset + limit);
+
+    const totalPages = Math.ceil(
+      mockPermissionsData.length / input.itemsPerPage,
+    );
+
+    return {
+      items,
+      pageInfo: {
+        currentPage: input.page,
+        totalPages,
+        itemsPerPage: limit,
+      },
+    };
   }),
 };

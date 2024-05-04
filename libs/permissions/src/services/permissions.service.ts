@@ -10,6 +10,7 @@ import {
 } from '../exceptions';
 import { handleError } from 'libs/common/helpers';
 import { PERMISSIONS_REPOSITORY_TOKEN } from '../constants';
+import { IPaginationProps } from 'libs/common';
 
 @Injectable()
 export class PermissionsService {
@@ -34,6 +35,16 @@ export class PermissionsService {
       }
 
       return this.permissionsRepository.create({ resource, type, description });
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  public async getAll(credentials: IPaginationProps) {
+    try {
+      const permissions = await this.permissionsRepository.findAll(credentials);
+
+      return permissions;
     } catch (error) {
       handleError(error);
     }

@@ -58,4 +58,21 @@ describe('PermissionsService', () => {
       );
     });
   });
+
+  describe('paginate permissions method test.', () => {
+    it('It should fetch permissions.', async () => {
+      const { page, itemsPerPage } = { page: 1, itemsPerPage: 5 };
+      const result = await service.getAll({ page, itemsPerPage });
+      const totalPages = Math.ceil(mockPermissionsData.length / itemsPerPage);
+
+      expect(result).toEqual({
+        items: mockPermissionsData,
+        pageInfo: {
+          currentPage: page,
+          totalPages,
+          itemsPerPage,
+        },
+      });
+    });
+  });
 });

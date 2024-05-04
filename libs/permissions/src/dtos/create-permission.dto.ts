@@ -19,6 +19,7 @@ export class CreatePermissionDto extends createZodDto(CreatePermissionSchema) {
 
   @ApiProperty({
     type: String,
+    required: false,
   })
   description: string;
 }
