@@ -44,7 +44,7 @@ describe('PermissionsService', () => {
       const result = await service.createPermission(permissionData);
 
       expect(result).toEqual({
-        id: `${mockPermissionsData.length}`,
+        id: expect.any(String),
         ...permissionData,
         ...MockingDates,
       });
@@ -93,6 +93,47 @@ describe('PermissionsService', () => {
       await expect(service.findById(permissionId)).rejects.toThrow(
         PermissionNotFoundException,
       );
+    });
+  });
+
+  describe('update permission method test.', () => {
+    it('permission should update successfully.', async () => {
+      const permission = mockPermissionsData[0];
+      const permissionData = {
+        type: PermissionTypes.READ,
+        resource: Resources.CUSTOMER_MESSAGES,
+      };
+      const result = await service.updateById(permission.id, permissionData);
+
+      expect(result).toEqual({
+        id: expect.any(String),
+        ...permissionData,
+      });
+    });
+
+    it('Should not update permission, provided wrong id.', async () => {
+      const permissionId = 'wrongId';
+      const permissionData = {
+        type: PermissionTypes.READ,
+        resource: Resources.CUSTOMER_MESSAGES,
+      };
+
+      await expect(
+        service.updateById(permissionId, permissionData),
+      ).rejects.toThrow(PermissionNotFoundException);
+    });
+
+    it('should not update a permission if a permission with the same credentials already exists in the database.', async () => {
+      const firstPermission = mockPermissionsData[0];
+      const secondPermission = mockPermissionsData[1];
+      const permissionData = {
+        type: secondPermission.type,
+        resource: secondPermission.resource,
+      };
+
+      await expect(
+        service.updateById(firstPermission.id, permissionData),
+      ).rejects.toThrow(PermissionAlreadyExistsException);
     });
   });
 });

@@ -8,10 +8,13 @@ import {
 import { PermissionTypes, Resources } from 'libs/permissions/enums';
 import { MockingDates } from 'libs/permissions/mocks';
 import {
-  CreatePermissionDto,
+  InsertPermissionDto,
   PaginationCredentialsDto,
 } from 'libs/permissions/dtos';
-import { PermissionAlreadyExistsException } from 'libs/permissions/exceptions';
+import {
+  PermissionAlreadyExistsException,
+  PermissionNotFoundException,
+} from 'libs/permissions/exceptions';
 
 describe('PermissionsController', () => {
   let controller: PermissionsController;
@@ -38,7 +41,7 @@ describe('PermissionsController', () => {
 
   describe('Create Permission Route', () => {
     it('should create a permission and return the created permission object.', async () => {
-      const permissionData: CreatePermissionDto = {
+      const permissionData: InsertPermissionDto = {
         type: PermissionTypes.WRITE,
         resource: Resources.CUSTOMER_MESSAGES,
         description: 'desc',
@@ -58,7 +61,7 @@ describe('PermissionsController', () => {
     });
 
     it('should fail to create a permission when input validation fails', async () => {
-      const invalidPermissionData: CreatePermissionDto = {
+      const invalidPermissionData: InsertPermissionDto = {
         type: PermissionTypes.WRITE,
         resource: Resources.CUSTOMER_MESSAGES,
         description: '',
@@ -101,6 +104,43 @@ describe('PermissionsController', () => {
       });
 
       expect(permissionService.getAll).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('Update Permission Route.', () => {
+    it('should update a permission and return the updated permission object.', async () => {
+      const id = '1';
+      const updateData = {
+        type: PermissionTypes.READ,
+        resource: Resources.CUSTOMER_MESSAGES,
+        description: 'Updated description',
+      };
+
+      const expectedResponse = {
+        id,
+        ...updateData,
+      };
+
+      const result = await controller.updatePermission(id, updateData);
+
+      expect(result).toEqual(expectedResponse);
+      expect(permissionService.updateById).toHaveBeenCalledWith(id, updateData);
+    });
+
+    it('should throw an error when the update fails due to non-existent permission', async () => {
+      const id = 'wrongId';
+      const updateData = {
+        type: PermissionTypes.WRITE,
+      };
+
+      permissionService.updateById = jest
+        .fn()
+        .mockRejectedValue(new PermissionNotFoundException());
+
+      await expect(controller.updatePermission(id, updateData)).rejects.toThrow(
+        PermissionNotFoundException,
+      );
+      expect(permissionService.updateById).toHaveBeenCalledWith(id, updateData);
     });
   });
 });

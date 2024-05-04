@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from 'libs/permissions';
 import { PermissionsRoutes } from 'libs/permissions/constants';
 import {
-  CreatePermissionDto,
+  InsertPermissionDto,
   PaginationCredentialsDto,
+  UpdatePermissionDto,
 } from 'libs/permissions/dtos';
 import {
   PaginationPermissionsResponseEntity,
@@ -18,7 +19,7 @@ export class PermissionsController {
 
   @Post()
   @ApiResponse({ type: PermissionEntity, status: 201 })
-  public createPermission(@Body() credentials: CreatePermissionDto) {
+  public createPermission(@Body() credentials: InsertPermissionDto) {
     return this.permissionService.createPermission(credentials);
   }
 
@@ -32,5 +33,14 @@ export class PermissionsController {
   @ApiResponse({ status: 200, type: PermissionEntity })
   public getPermission(@Param('id') id: string) {
     return this.permissionService.findById(id);
+  }
+
+  @Patch(PermissionsRoutes.permission_id)
+  @ApiResponse({ status: 200, type: PermissionEntity })
+  public updatePermission(
+    @Param('id') id: string,
+    @Body() updateData: UpdatePermissionDto,
+  ) {
+    return this.permissionService.updateById(id, updateData);
   }
 }

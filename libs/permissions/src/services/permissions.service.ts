@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IPermission, IPermissionsRepository } from '../interfaces';
+import {
+  IPermission,
+  IPermissionsRepository,
+  IUpdatePermissionsCredentials,
+} from '../interfaces';
 import {
   TCreatePermissionCredentials,
   TFindPermissionCredentials,
@@ -63,15 +67,49 @@ export class PermissionsService {
     }
   }
 
+  public async updateById(
+    id: string,
+    updateData: IUpdatePermissionsCredentials,
+  ) {
+    try {
+      const permission = await this.findById(id);
+      if (!permission) {
+        throw new PermissionNotFoundException();
+      }
+
+      if (updateData.resource || updateData.type) {
+        if (
+          permission.resource !== updateData.resource ||
+          permission.type !== updateData.type
+        ) {
+          await this.checkPermissionExistence({
+            type: updateData.type,
+            resource: updateData.resource,
+          });
+        }
+      }
+
+      const result = await this.permissionsRepository.updateById(
+        id,
+        updateData,
+      );
+
+      return result.item;
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   private async checkPermissionExistence(
     credentials: TFindPermissionCredentials,
-  ): Promise<IPermission> {
+  ) {
     const permission = await this.permissionsRepository.findOne(credentials);
 
-    if (!permission) {
-      throw new PermissionNotFoundException();
+    if (permission) {
+      throw new PermissionAlreadyExistsException(
+        credentials.type,
+        credentials.resource,
+      );
     }
-
-    return permission;
   }
 }

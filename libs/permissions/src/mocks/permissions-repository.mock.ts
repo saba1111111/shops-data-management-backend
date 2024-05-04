@@ -4,6 +4,8 @@ import {
   TFindPermissionCredentials,
 } from '../types';
 import { MockingDates, mockPermissionsData } from './permissions-data.mocks';
+import { randomBytes } from 'crypto';
+import { IUpdatePermissionsCredentials } from '../interfaces';
 
 export const MockPermissionsRepository = {
   findOne: jest.fn((criteria: TFindPermissionCredentials) => {
@@ -18,11 +20,11 @@ export const MockPermissionsRepository = {
 
   create: jest.fn((input: TCreatePermissionCredentials) => {
     const newPermission = {
+      id: randomBytes(16).toString('hex'),
       ...input,
-      id: `${mockPermissionsData.length + 1}`,
       ...MockingDates,
     };
-    mockPermissionsData.push(newPermission);
+
     return Promise.resolve(newPermission);
   }),
 
@@ -51,4 +53,16 @@ export const MockPermissionsRepository = {
       mockPermissionsData.find((permission) => permission.id === id),
     );
   }),
+
+  updateById: jest.fn(
+    (id: string, updateData: IUpdatePermissionsCredentials) => {
+      return Promise.resolve({
+        item: {
+          id,
+          ...updateData,
+        },
+        affectedCount: 1,
+      });
+    },
+  ),
 };

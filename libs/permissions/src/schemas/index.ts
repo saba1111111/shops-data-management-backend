@@ -1,1 +1,1 @@
-export * from './create-permission.schema';
+export * from './insert-permission.schema';

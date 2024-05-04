@@ -5,7 +5,6 @@ import {
   IPaginationResult,
   UpdateItemResponse,
 } from '../interfaces';
-import { IPermission } from 'libs/permissions/interfaces';
 import { ModelAttributes } from 'sequelize';
 
 export class BaseSequelizeRepository<Item, CreateItemAttrs>
@@ -53,7 +52,7 @@ export class BaseSequelizeRepository<Item, CreateItemAttrs>
 
   public async updateById(
     id: string,
-    dto: Partial<IPermission>,
+    dto: Partial<Item>,
   ): Promise<UpdateItemResponse<Item>> {
     const [affectedCount] = await this.repository.update(dto, {
       where: { id },
