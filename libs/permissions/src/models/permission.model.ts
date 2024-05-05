@@ -14,10 +14,10 @@ import { PermissionTypes, Resources } from '../enums';
 import { TCreatePermissionCredentials } from '../types';
 
 @Table({ tableName: Models.PERMISSIONS, timestamps: true })
-export class PermissionModel extends Model<
-  IPermission,
-  TCreatePermissionCredentials
-> {
+export class PermissionModel
+  extends Model<IPermission, TCreatePermissionCredentials>
+  implements IPermission
+{
   @PrimaryKey
   @AutoIncrement
   @Column({
@@ -43,7 +43,7 @@ export class PermissionModel extends Model<
     type: DataType.STRING,
     allowNull: true,
   })
-  description: string;
+  description?: string;
 
   @CreatedAt
   @Column
