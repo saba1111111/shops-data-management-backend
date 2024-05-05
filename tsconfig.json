@@ -35,6 +35,12 @@
       ],
       "libs/users/*": [
         "libs/users/src/*"
+      ],
+      "libs/utils": [
+        "libs/utils/src"
+      ],
+      "libs/utils/*": [
+        "libs/utils/src/*"
       ]
     }
   }
