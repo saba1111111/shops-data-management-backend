@@ -93,7 +93,8 @@
       "^libs/common(|/.*)$": "<rootDir>/libs/common/src/$1",
       "^libs/permissions(|/.*)$": "<rootDir>/libs/permissions/src/$1",
       "^libs/users(|/.*)$": "<rootDir>/libs/users/src/$1",
-      "^libs/utils(|/.*)$": "<rootDir>/libs/utils/src/$1"
+      "^libs/utils(|/.*)$": "<rootDir>/libs/utils/src/$1",
+      "^libs/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
     }
   }
 }

@@ -1,1 +1,1 @@
-export * from './user-statuses.enum';
+export * from './user-info.enum';

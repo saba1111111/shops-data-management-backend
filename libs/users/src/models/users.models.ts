@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript';
 import { IUser } from '../interfaces';
 import { TCreateUserCredentials } from '../types';
-import { UserStatuses } from '../enums';
+import { UserStatuses, UserTypes } from '../enums';
 
 @Table({ tableName: Models.USERS, timestamps: true })
 export class UsersModel
@@ -53,11 +53,10 @@ export class UsersModel
   phoneNumber: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-    unique: true,
+    type: DataType.ENUM(...Object.values(UserTypes)),
+    allowNull: false,
   })
-  email?: string;
+  type: UserTypes;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserStatuses)),

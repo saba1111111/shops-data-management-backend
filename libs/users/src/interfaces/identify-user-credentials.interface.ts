@@ -1,7 +1,7 @@
-import { UserStatuses } from '../enums';
+import { UserStatuses, UserTypes } from '../enums';
 
 export interface IdentifyUserCredentials {
-  status: UserStatuses;
-  phoneNumber?: string;
-  email?: string;
+  type: UserTypes;
+  status?: UserStatuses;
+  phoneNumber: string;
 }

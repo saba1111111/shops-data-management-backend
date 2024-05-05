@@ -41,6 +41,12 @@
       ],
       "libs/utils/*": [
         "libs/utils/src/*"
+      ],
+      "libs/auth": [
+        "libs/auth/src"
+      ],
+      "libs/auth/*": [
+        "libs/auth/src/*"
       ]
     }
   }

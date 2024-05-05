@@ -27,14 +27,13 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
-      email: {
-        allowNull: true,
-        type: Sequelize.STRING,
-        unique: true,
+      type: {
+        allowNull: false,
+        type: Sequelize.ENUM('worker', 'customer'),
       },
       status: {
         allowNull: false,
-        type: Sequelize.ENUM('worker', 'customer'),
+        type: Sequelize.ENUM('active', 'inactive', 'unverified', 'banned'),
       },
       information: {
         allowNull: true,
