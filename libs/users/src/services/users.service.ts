@@ -1,44 +1,56 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { USERS_REPOSITORY_TOKEN } from '../constants';
-import { IUsersRepository } from '../interfaces';
-import { TCreateUserCredentials, TUserAlreadyExistParameters } from '../types';
+import { IUsersRepository, IdentifyUserCredentials } from '../interfaces';
+import { TCreateUserCredentials } from '../types';
 import { handleError } from 'libs/common/helpers';
 import { UserAlreadyExistsException } from '../exceptions';
+import { HASH_SERVICE_TOKEN } from 'libs/utils/constants';
+import { IHashService } from 'libs/utils/interfaces';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(USERS_REPOSITORY_TOKEN)
     private readonly usersRepository: IUsersRepository,
+    @Inject(HASH_SERVICE_TOKEN) private readonly hashService: IHashService,
   ) {}
 
   public async create(input: TCreateUserCredentials) {
     try {
-      await this.checkUserAlreadyExistence({
+      await this.isUserRegisteredWithContactInfo({
         status: input.status,
         phoneNumber: input.phoneNumber,
+        email: input.email,
       });
 
-      if (input.email) {
-        await this.checkUserAlreadyExistence({
-          status: input.status,
-          email: input.email,
-        });
-      }
+      const hashedPassword = await this.hashService.hash(input.password);
 
-      // Hash password.
+      return this.usersRepository.create({
+        ...input,
+        password: hashedPassword,
+      });
     } catch (error) {
       handleError(error);
     }
   }
 
-  public async checkUserAlreadyExistence(
-    input: TUserAlreadyExistParameters,
+  private async isUserRegisteredWithContactInfo(
+    input: IdentifyUserCredentials,
   ): Promise<void> {
-    const user = await this.usersRepository.findOne(input);
+    const { status, phoneNumber, email } = input;
+
+    const user =
+      await this.usersRepository.isUserRegisteredWithContactInfo(input);
 
     if (user) {
-      throw new UserAlreadyExistsException(input);
+      const emailExist = email && email === user.email;
+      const phoneNumberExist = phoneNumber && phoneNumber === user.phoneNumber;
+
+      throw new UserAlreadyExistsException({
+        status,
+        ...(emailExist ? { email } : {}),
+        ...(phoneNumberExist ? { phoneNumber } : {}),
+      });
     }
   }
 }

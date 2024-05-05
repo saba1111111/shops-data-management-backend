@@ -4,9 +4,10 @@ import { UsersSequelizeRepository } from './repositories';
 import { USERS_REPOSITORY_TOKEN } from './constants';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModel } from './models';
+import { UtilsModule } from 'libs/utils';
 
 @Module({
-  imports: [SequelizeModule.forFeature([UsersModel])],
+  imports: [SequelizeModule.forFeature([UsersModel]), UtilsModule],
   providers: [
     UsersService,
     { provide: USERS_REPOSITORY_TOKEN, useClass: UsersSequelizeRepository },

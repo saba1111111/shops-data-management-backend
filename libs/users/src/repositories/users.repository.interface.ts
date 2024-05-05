@@ -1,10 +1,14 @@
 import { BaseSequelizeRepository } from 'libs/common/repositories';
-import { IUser, IUsersRepository } from '../interfaces';
+import {
+  IUser,
+  IUsersRepository,
+  IdentifyUserCredentials,
+} from '../interfaces';
 import { TCreateUserCredentials } from '../types';
 import { InjectModel } from '@nestjs/sequelize';
 import { UsersModel } from '../models';
 import { Repository } from 'sequelize-typescript';
-import { TFindUserCredentials } from '../types/find-user-credentials.type';
+import { Op } from 'sequelize';
 
 export class UsersSequelizeRepository
   extends BaseSequelizeRepository<IUser, TCreateUserCredentials>
@@ -17,7 +21,21 @@ export class UsersSequelizeRepository
     super(repository);
   }
 
-  public findOne(input: TFindUserCredentials): Promise<IUser> {
-    return this.repository.findOne({ where: input });
+  public isUserRegisteredWithContactInfo(
+    input: IdentifyUserCredentials,
+  ): Promise<IUser> {
+    const { email, phoneNumber, status } = input;
+    let where = {};
+
+    if (email && phoneNumber) {
+      where = {
+        status,
+        [Op.or]: [{ email }, { phoneNumber }],
+      };
+    } else {
+      where = input;
+    }
+
+    return this.repository.findOne({ where });
   }
 }

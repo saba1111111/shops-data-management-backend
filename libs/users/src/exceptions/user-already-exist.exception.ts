@@ -1,14 +1,18 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { TUserAlreadyExistParameters } from '../types';
+import { IdentifyUserCredentials } from '../interfaces';
 
 export class UserAlreadyExistsException extends HttpException {
-  constructor(input: TUserAlreadyExistParameters) {
-    const contactInformation = input['email']
-      ? `email: '${input['email']}'`
-      : `phoneNumber: '${input['phoneNumber']}'`;
+  constructor(input: IdentifyUserCredentials) {
+    const contactInformation = [];
+    if (input.email) {
+      contactInformation.push(`email: '${input.email}'`);
+    }
+    if (input.phoneNumber) {
+      contactInformation.push(`phoneNumber: '${input.phoneNumber}'`);
+    }
 
     super(
-      `User with the status: '${input.status}' and ${contactInformation} already exist.`,
+      `User with the status: '${input.status}' and ${contactInformation.join(', ')} already exist.`,
       HttpStatus.BAD_REQUEST,
     );
   }
