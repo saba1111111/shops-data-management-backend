@@ -35,8 +35,6 @@ describe('PermissionsService', () => {
     repository = module.get<IPermissionsRepository>(
       PERMISSIONS_REPOSITORY_TOKEN,
     );
-
-    repository.deleteById = jest.fn(() => Promise.resolve(1));
   });
 
   it('should be defined', () => {
