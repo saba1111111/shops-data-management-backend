@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { handleError } from 'libs/common/helpers';
-import {
-  IRegisterUserCredentials,
-  IRegisterWorkerUserCredentials,
-} from '../interfaces';
+import { IRegisterWorkerUserCredentials } from '../interfaces';
 import { UsersService } from 'libs/users';
 import { HASH_SERVICE_TOKEN } from 'libs/utils/constants';
 import { IHashService } from 'libs/utils/interfaces';
