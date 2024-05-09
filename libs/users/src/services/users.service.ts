@@ -6,7 +6,11 @@ import {
   IdentifyUserCredentials,
 } from '../interfaces';
 import { TCreateUserCredentials } from '../types';
-import { UserAlreadyExistsException } from '../exceptions';
+import {
+  UserAlreadyExistsException,
+  UserNotFoundException,
+} from '../exceptions';
+import { handleError } from 'libs/common/helpers';
 
 @Injectable()
 export class UsersService {
@@ -19,13 +23,29 @@ export class UsersService {
     return this.usersRepository.create(input);
   }
 
-  public async checkUserExistence(
+  public async checkUserAlreadyExistence(
     input: IdentifyUserCredentials,
   ): Promise<void> {
-    const user = await this.usersRepository.findUser(input);
+    try {
+      const user = await this.usersRepository.findUser(input);
 
-    if (user) {
-      throw new UserAlreadyExistsException(input.type, input.phoneNumber);
+      if (user) {
+        throw new UserAlreadyExistsException(input.type, input.phoneNumber);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  public async ensureUserExistsById(userId: string): Promise<void> {
+    try {
+      const user = await this.usersRepository.findById(userId);
+
+      if (!user) {
+        throw new UserNotFoundException(userId);
+      }
+    } catch (error) {
+      handleError(error);
     }
   }
 }

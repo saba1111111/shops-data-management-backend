@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './services/users.service';
-import { UsersSequelizeRepository } from './repositories';
-import { USERS_REPOSITORY_TOKEN } from './constants';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { UsersModel } from './models';
+import { UsersModel, UsersPermissionsModel } from './models';
+import { UsersModuleRepositoryProviders } from './providers';
+import { UsersPermissionsService } from './services/users-permissions.service';
+import { PermissionsLibModule } from 'libs/permissions';
 
 @Module({
-  imports: [SequelizeModule.forFeature([UsersModel])],
+  imports: [
+    SequelizeModule.forFeature([UsersModel, UsersPermissionsModel]),
+    PermissionsLibModule,
+  ],
   providers: [
     UsersService,
-    { provide: USERS_REPOSITORY_TOKEN, useClass: UsersSequelizeRepository },
+    UsersPermissionsService,
+    ...UsersModuleRepositoryProviders,
   ],
-  exports: [UsersService],
+  exports: [UsersService, UsersPermissionsService],
 })
 export class UsersLibModule {}

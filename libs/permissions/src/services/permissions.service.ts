@@ -124,7 +124,7 @@ export class PermissionsService {
     }
   }
 
-  private async checkPermissionExistence(
+  public async checkPermissionExistence(
     credentials: TFindPermissionCredentials,
   ): Promise<void> {
     const permission = await this.permissionsRepository.findOne(credentials);
@@ -134,6 +134,18 @@ export class PermissionsService {
         credentials.type,
         credentials.resource,
       );
+    }
+  }
+
+  public async ensurePermissionExistsById(userId: string): Promise<void> {
+    try {
+      const user = await this.permissionsRepository.findById(userId);
+
+      if (!user) {
+        throw new PermissionNotFoundException();
+      }
+    } catch (error) {
+      handleError(error);
     }
   }
 }

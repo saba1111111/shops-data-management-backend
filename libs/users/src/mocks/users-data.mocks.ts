@@ -1,7 +1,7 @@
-import { MockingDates } from 'libs/permissions/mocks';
 import { randomBytes } from 'crypto';
 import { UserStatuses, UserTypes } from '../enums';
 import { IUser } from '../interfaces';
+import { MockingDates } from 'libs/common/mocks';
 
 export const MockUser: IUser = Object.freeze({
   id: randomBytes(16).toString('hex'),

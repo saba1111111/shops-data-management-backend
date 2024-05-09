@@ -18,7 +18,7 @@ export class AuthService {
 
     try {
       const userType = UserTypes.WORKER;
-      await this.userService.checkUserExistence({
+      await this.userService.checkUserAlreadyExistence({
         type: userType,
         phoneNumber: user.phoneNumber,
       });

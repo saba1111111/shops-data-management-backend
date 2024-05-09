@@ -4,12 +4,14 @@ import { DatabaseConfigModule } from './config';
 import { PermissionsModule } from './permissions/permissions.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseConfigModule,
     PermissionsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [

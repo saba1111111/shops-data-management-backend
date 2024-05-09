@@ -3,7 +3,11 @@ import { IUsersRepository } from '../interfaces';
 import { UsersService } from './users.service';
 import { USERS_REPOSITORY_TOKEN } from '../constants';
 import { MockUser } from '../mocks';
-import { UserAlreadyExistsException } from '../exceptions';
+import {
+  UserAlreadyExistsException,
+  UserNotFoundException,
+} from '../exceptions';
+import { UnexpectedErrorException } from 'libs/common/exceptions';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -17,7 +21,11 @@ describe('UsersService', () => {
         UsersService,
         {
           provide: USERS_REPOSITORY_TOKEN,
-          useValue: { findUser: jest.fn(), create: jest.fn() },
+          useValue: {
+            findUser: jest.fn(),
+            create: jest.fn(),
+            findById: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -57,15 +65,49 @@ describe('UsersService', () => {
       const input = { type: MockUser.type, phoneNumber: MockUser.phoneNumber };
       repository.findUser = jest.fn(() => Promise.resolve(null));
 
-      await expect(service.checkUserExistence(input)).resolves.toBeUndefined();
+      await expect(
+        service.checkUserAlreadyExistence(input),
+      ).resolves.toBeUndefined();
     });
 
     it('should throw an exception when user exist.', async () => {
       const input = { type: MockUser.type, phoneNumber: MockUser.phoneNumber };
       repository.findUser = jest.fn(() => Promise.resolve(MockUser));
 
-      await expect(service.checkUserExistence(input)).rejects.toThrow(
+      await expect(service.checkUserAlreadyExistence(input)).rejects.toThrow(
         UserAlreadyExistsException,
+      );
+    });
+  });
+
+  describe('ensure user exists By id method.', () => {
+    it('should not return any value when user exists by ID', async () => {
+      const userId = MockUser.id;
+      repository.findById = jest.fn(() => Promise.resolve(MockUser));
+
+      await expect(
+        service.ensureUserExistsById(userId),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw error when user not exists by ID.', async () => {
+      const userId = MockUser.id;
+      repository.findById = jest.fn(() => Promise.resolve(null));
+
+      await expect(service.ensureUserExistsById(userId)).rejects.toThrow(
+        UserNotFoundException,
+      );
+    });
+
+    it('throws an UnexpectedErrorException when user ID is in the wrong format', async () => {
+      const userId = 'userIdInWrongFormat';
+
+      repository.findById = jest.fn(() =>
+        Promise.reject('Id field is in wrong format.'),
+      );
+
+      await expect(service.ensureUserExistsById(userId)).rejects.toThrow(
+        UnexpectedErrorException,
       );
     });
   });

@@ -6,7 +6,6 @@ import {
   mockPermissionsData,
 } from 'libs/permissions/mocks';
 import { PermissionTypes, Resources } from 'libs/permissions/enums';
-import { MockingDates } from 'libs/permissions/mocks';
 import {
   InsertPermissionDto,
   PaginationCredentialsDto,
@@ -15,6 +14,7 @@ import {
   PermissionAlreadyExistsException,
   PermissionNotFoundException,
 } from 'libs/permissions/exceptions';
+import { MockingDates } from 'libs/common/mocks';
 
 describe('PermissionsController', () => {
   let controller: PermissionsController;

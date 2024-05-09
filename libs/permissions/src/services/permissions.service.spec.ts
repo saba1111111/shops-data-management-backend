@@ -7,12 +7,10 @@ import {
   PermissionAlreadyExistsException,
   PermissionNotFoundException,
 } from '../exceptions';
-import {
-  mockPermissionsData,
-  MockingDates,
-  MockPermissionsRepository,
-} from '../mocks';
+import { mockPermissionsData, MockPermissionsRepository } from '../mocks';
 import { IPermissionsRepository } from '../interfaces';
+import { UnexpectedErrorException } from 'libs/common/exceptions';
+import { MockingDates } from 'libs/common/mocks';
 
 describe('PermissionsService', () => {
   let service: PermissionsService;
@@ -173,6 +171,65 @@ describe('PermissionsService', () => {
       await expect(service.deleteById(permission.id)).rejects.toThrow(
         NoPermissionsDeletedException,
       );
+    });
+  });
+
+  describe('checkPermissionExistence method.', () => {
+    const input = {
+      type: mockPermissionsData[0].type,
+      resource: mockPermissionsData[0].resource,
+    };
+
+    it('should not throw an exception if permission does not exist.', async () => {
+      repository.findOne = jest.fn(() => Promise.resolve(null));
+
+      await expect(
+        service.checkPermissionExistence(input),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw an exception when permission exist.', async () => {
+      repository.findOne = jest.fn(() =>
+        Promise.resolve(mockPermissionsData[0]),
+      );
+
+      await expect(service.checkPermissionExistence(input)).rejects.toThrow(
+        PermissionAlreadyExistsException,
+      );
+    });
+  });
+
+  describe('ensure permission exists By id method.', () => {
+    it('should not return any value when permission exists by ID', async () => {
+      const permissionId = mockPermissionsData[0].id;
+      repository.findById = jest.fn(() =>
+        Promise.resolve(mockPermissionsData[0]),
+      );
+
+      await expect(
+        service.ensurePermissionExistsById(permissionId),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw error when permission not exists by ID.', async () => {
+      const permissionId = mockPermissionsData[0].id;
+      repository.findById = jest.fn(() => Promise.resolve(null));
+
+      await expect(
+        service.ensurePermissionExistsById(permissionId),
+      ).rejects.toThrow(PermissionNotFoundException);
+    });
+
+    it('throws an UnexpectedErrorException when permission ID is in the wrong format', async () => {
+      const permissionId = 'permissionIdInWrongFormat';
+
+      repository.findById = jest.fn(() =>
+        Promise.reject('Id field is in wrong format.'),
+      );
+
+      await expect(
+        service.ensurePermissionExistsById(permissionId),
+      ).rejects.toThrow(UnexpectedErrorException);
     });
   });
 });

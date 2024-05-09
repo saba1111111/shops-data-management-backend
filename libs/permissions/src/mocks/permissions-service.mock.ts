@@ -1,8 +1,8 @@
 import { IPaginationProps } from 'libs/common';
 import { TCreatePermissionCredentials } from '../types';
-import { MockingDates } from './permissions-data.mocks';
 import { MockPermissionsRepository } from './permissions-repository.mock';
 import { UpdatePermissionDto } from '../dtos';
+import { MockingDates } from 'libs/common/mocks';
 
 export const MockPermissionsService = {
   createPermission: jest.fn((input: TCreatePermissionCredentials) => {

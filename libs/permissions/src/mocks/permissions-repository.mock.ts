@@ -3,9 +3,10 @@ import {
   TCreatePermissionCredentials,
   TFindPermissionCredentials,
 } from '../types';
-import { MockingDates, mockPermissionsData } from './permissions-data.mocks';
+import { mockPermissionsData } from './permissions-data.mocks';
 import { randomBytes } from 'crypto';
 import { IUpdatePermissionsCredentials } from '../interfaces';
+import { MockingDates } from 'libs/common/mocks';
 
 export const MockPermissionsRepository = {
   findOne: jest.fn((criteria: TFindPermissionCredentials) => {

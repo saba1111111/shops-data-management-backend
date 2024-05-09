@@ -1,10 +1,6 @@
+import { MockingDates } from 'libs/common/mocks';
 import { PermissionTypes, Resources } from '../enums';
 import { IPermission } from '../interfaces';
-
-export const MockingDates = {
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
 
 export const mockPermissionsData: ReadonlyArray<Readonly<IPermission>> =
   Object.freeze([
